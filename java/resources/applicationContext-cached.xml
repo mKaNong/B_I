@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+ 	<!--mcc -->
+	<bean id="memcachedPool" class="com.danga.MemCached.SockIOPool"
+		factory-method="getInstance" init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>neeaMemcachedPool</value>
+		</constructor-arg>
+		<property name="servers">
+			<list>
+				<value>192.168.1.20:11211</value>
+			</list>
+		</property>
+		<property name="weights">
+			<list>
+				<value>1</value>
+			</list>
+		</property>
+		<property name="initConn">
+			<value>5</value>
+		</property>
+		<property name="minConn">
+			<value>5</value>
+		</property>
+		<property name="maxConn">
+			<value>250</value>
+		</property>
+		<property name="maintSleep">
+			<value>30</value>
+		</property>
+		<property name="nagle">
+			<value>false</value>
+		</property>
+		<property name="maxIdle">
+			<value>6000</value>
+		</property>
+		<property name="socketTO">
+			<value>3000</value>
+		</property>
+	</bean>
+
+	<bean id="memCachedClient" class="com.danga.MemCached.MemCachedClient">
+		<constructor-arg>
+			<value>neeaMemcachedPool</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="memcacheTemplate" name="memcacheTemplate"
+		class="com.framework.qw.hf.cacheservice.MemcacheTemplate">
+		<property name="memCachedClient" ref="memCachedClient"></property>
+	</bean>
+
+	<!--/mcc -->
+
+	<!-- this is config cache -->
+	<bean id="cacheService" name="cacheService"
+		class="com.framework.qw.hf.cacheservice.CacheService">
+		 <property name="memcacheTemplate" ref="memcacheTemplate"></property>
+		  <property name="cachetype" value="1"></property> 
+		<!--  <property name="cachetype" value="2"></property> 
+		
+		<property name="jedisTemplate" ref="jedisTemplate"></property> -->
+		
+	</bean>
+	
+	
+	    <!-- 
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="1000" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="1" />
+
+		<property name="maxWaitMillis" value="30000" />
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="true" />
+		<property name="testWhileIdle" value="true" />
+	 
+	</bean>
+	<bean id="jedisCluster" class="redis.clients.jedis.JedisCluster">
+		<constructor-arg index="0">
+			<set>
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg type="String" value="192.168.1.21" />
+					<constructor-arg type="int" value="7001" />
+				</bean>
+
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg type="String" value="192.168.1.21" />
+					<constructor-arg type="int" value="7002" />
+				</bean>
+
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg type="String" value="192.168.1.21" />
+					<constructor-arg type="int" value="7004" />
+				</bean>
+
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg type="String" value="192.168.1.20" />
+					<constructor-arg type="int" value="7005" />
+				</bean>
+
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg type="String" value="192.168.1.20" />
+					<constructor-arg type="int" value="7006" />
+				</bean>
+
+				<bean class="redis.clients.jedis.HostAndPort">
+					<constructor-arg type="String" value="192.168.1.20" />
+					<constructor-arg type="int" value="7007" />
+				</bean>
+			</set>
+		</constructor-arg>
+
+		<constructor-arg ref="jedisPoolConfig" index="1" />
+	</bean>
+	<bean id="jedisTemplate" name="jedisTemplate"
+		class="com.framework.qw.hf.cacheservice.JedisTemplate">
+		<property name="jedisCluster" ref="jedisCluster"></property>
+	</bean>
+ -->
+</beans>
